@@ -9,6 +9,14 @@ import Login from './pages/Login';
 import NotFound from './pages/NotFound';
 
 class App extends React.Component {
+  constructor() {
+    super();
+
+    this.state = {
+
+    };
+  }
+
   render() {
     return (
       <>

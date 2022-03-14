@@ -1,7 +1,8 @@
-import { toHaveDisplayValue } from '@testing-library/jest-dom/dist/matchers';
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import Header from './components/Header';
+
+const AlbumsAPI = require('../services/searchAlbumsAPI');
 
 const TWO = 2;
 
@@ -23,6 +24,14 @@ class Search extends Component {
         SaveButtonDisabled: false,
       });
     }
+  };
+
+  handleGetInput = async () => {
+    const { artistName } = this.state;
+    await AlbumsAPI({ artistName });
+    this.setState({
+      artistName: '',
+    });
   };
 
   handleInputChange = ({ target }) => {

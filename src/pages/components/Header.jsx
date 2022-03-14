@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import Loading from './Loading';
-
 import { getUser } from '../../services/userAPI';
 
 class Header extends Component {
@@ -27,16 +27,19 @@ class Header extends Component {
   render() {
     const { name, loading } = this.state;
     return (
-      <div>
+      <header data-testid="header-component">
+        <Link data-testid="link-to-search" to="../search">Pesquisa</Link>
+        <Link data-testid="link-to-favorites" to="../favorites">Favoritas</Link>
+        <Link data-testid="link-to-profile" to="../profile">Perfil</Link>
         {
           loading
             ? <Loading /> : (
-              <header data-testid="header-component">
+              <div>
                 <h1 data-testid="header-user-name">{ name }</h1>
-              </header>
+              </div>
             )
         }
-      </div>
+      </header>
     );
   }
 }

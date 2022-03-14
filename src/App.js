@@ -23,7 +23,7 @@ class App extends React.Component {
         <p>TrybeTunes</p>
         <BrowserRouter>
           <Switch>
-            <Route path="/profile/edit" component={ ProfileEdit } />
+            <Route exact path="/profile/edit" component={ ProfileEdit } />
             <Route path="/album/:id" component={ Album } />
             <Route path="/search" component={ Search } />
             <Route path="/favorites" component={ Favorites } />

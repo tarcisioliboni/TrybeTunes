@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Header from './components/Header';
 import getMusics from '../services/musicsAPI';
 import MusicCard from './MusicCard';
-import { addSong } from '../services/favoriteSongsAPI';
+import { addSong, getFavoriteSongs } from '../services/favoriteSongsAPI';
 import Loading from './components/Loading';
 
 class Album extends Component {
@@ -15,14 +15,27 @@ class Album extends Component {
       albumName: '',
       musics: [],
       favorite: [],
-      checked: true,
-      unchecked: false,
       loading: false,
     };
   }
 
   componentDidMount() {
     this.musicList();
+    this.favoriteMusic();
+  }
+
+  favoriteMusic = async () => {
+    this.setState({
+      loading: true,
+    });
+    const result = await getFavoriteSongs();
+    this.setState({
+      loading: false,
+      favorite: result,
+    }, () => {
+      const { favorite } = this.state;
+      console.log(favorite);
+    });
   }
 
   musicList = async () => {
@@ -36,24 +49,32 @@ class Album extends Component {
     const filtered = result.filter((item) => item.kind === 'song');
     this.setState({
       musics: filtered,
-      artistName: result[0].artistName,
-      albumName: result[0].collectionName,
-      albumImage: result[0].artworkUrl100,
+      artistName: filtered.artistName,
+      albumName: filtered.collectionName,
+      albumImage: filtered.artworkUrl100,
     });
-    console.log(filtered);
+    // console.log(filtered);
   }
 
-  handleChange = async (prop) => {
-    this.setState({
-      loading: true,
-    });
+  handleAddSong = async (prop) => {
     await addSong(prop);
     this.setState((prevState) => ({
       favorite: [...prevState.favorite, prop],
+      loading: false,
     }));
+    console.log(prop);
     this.setState({
       loading: false,
     });
+  }
+
+  handleChange = (prop, { target }) => {
+    this.setState({
+      loading: true,
+    });
+    if (target.checked) {
+      this.handleAddSong(prop);
+    }
   }
 
   render() {
@@ -64,9 +85,8 @@ class Album extends Component {
       musics,
       favorite,
       loading,
-      checked,
-      unchecked,
     } = this.state;
+
     return (
       <div data-testid="page-album">
         <Header />
@@ -79,12 +99,13 @@ class Album extends Component {
               <div>
                 {
                   musics.map((music, index) => (<MusicCard
+                    musicData={ music }
                     key={ index }
                     music={ music.trackName }
                     preview={ music.previewUrl }
                     trackId={ music.trackId }
                     favoriteChecked={ favorite
-                      .some((item) => item === music.trackId) ? checked : unchecked }
+                      .some((item) => item.trackId === music.trackId) }
                     favoriteOnChange={ this.handleChange }
                   />
                   ))

@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import Header from './components/Header';
 import getMusics from '../services/musicsAPI';
 import MusicCard from './MusicCard';
+import { addSong } from '../services/favoriteSongsAPI';
+import Loading from './components/Loading';
 
 class Album extends Component {
   constructor() {
@@ -12,6 +14,10 @@ class Album extends Component {
       artistName: '',
       albumName: '',
       musics: [],
+      favorite: [],
+      checked: true,
+      unchecked: false,
+      loading: false,
     };
   }
 
@@ -37,26 +43,56 @@ class Album extends Component {
     console.log(filtered);
   }
 
+  handleChange = async (prop) => {
+    this.setState({
+      loading: true,
+    });
+    await addSong(prop);
+    this.setState((prevState) => ({
+      favorite: [...prevState.favorite, prop],
+    }));
+    this.setState({
+      loading: false,
+    });
+  }
+
   render() {
-    const { artistName, albumName, albumImage, musics } = this.state;
+    const {
+      artistName,
+      albumName,
+      albumImage,
+      musics,
+      favorite,
+      loading,
+      checked,
+      unchecked,
+    } = this.state;
     return (
       <div data-testid="page-album">
         <Header />
-        <section>
-          <h1 data-testid="artist-name">{ artistName }</h1>
-          <h2 data-testid="album-name">{ albumName }</h2>
-          <img src={ albumImage } alt={ artistName } />
-          <div>
-            {
-              musics.map((music, index) => (<MusicCard
-                key={ index }
-                music={ music.trackName }
-                preview={ music.previewUrl }
-              />
-              ))
-            }
-          </div>
-        </section>
+        {
+          loading ? <Loading /> : (
+            <section>
+              <h1 data-testid="artist-name">{ artistName }</h1>
+              <h2 data-testid="album-name">{ albumName }</h2>
+              <img src={ albumImage } alt={ artistName } />
+              <div>
+                {
+                  musics.map((music, index) => (<MusicCard
+                    key={ index }
+                    music={ music.trackName }
+                    preview={ music.previewUrl }
+                    trackId={ music.trackId }
+                    favoriteChecked={ favorite
+                      .some((item) => item === music.trackId) ? checked : unchecked }
+                    favoriteOnChange={ this.handleChange }
+                  />
+                  ))
+                }
+              </div>
+            </section>
+          )
+        }
       </div>
     );
   }

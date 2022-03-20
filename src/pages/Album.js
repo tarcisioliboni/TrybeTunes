@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Header from './components/Header';
 import getMusics from '../services/musicsAPI';
 import MusicCard from './MusicCard';
-import { addSong, getFavoriteSongs } from '../services/favoriteSongsAPI';
+import { addSong, getFavoriteSongs, removeSong } from '../services/favoriteSongsAPI';
 import Loading from './components/Loading';
 
 class Album extends Component {
@@ -49,9 +49,9 @@ class Album extends Component {
     const filtered = result.filter((item) => item.kind === 'song');
     this.setState({
       musics: filtered,
-      artistName: filtered.artistName,
-      albumName: filtered.collectionName,
-      albumImage: filtered.artworkUrl100,
+      artistName: result[0].artistName,
+      albumName: result[0].collectionName,
+      albumImage: result[0].artworkUrl100,
     });
     // console.log(filtered);
   }
@@ -62,10 +62,19 @@ class Album extends Component {
       favorite: [...prevState.favorite, prop],
       loading: false,
     }));
-    console.log(prop);
+    // console.log(prop);
     this.setState({
       loading: false,
     });
+  }
+
+  handleRemoveSong = async (prop) => {
+    await removeSong(prop);
+    console.log(prop);
+    this.setState((prevState) => ({
+      favorite: prevState.favorite.filter((item) => item !== prop),
+      loading: false,
+    }), () => this.favoriteMusic());
   }
 
   handleChange = (prop, { target }) => {
@@ -74,6 +83,8 @@ class Album extends Component {
     });
     if (target.checked) {
       this.handleAddSong(prop);
+    } else {
+      this.handleRemoveSong(prop);
     }
   }
 

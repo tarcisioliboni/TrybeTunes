@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Header from './components/Header';
-import getMusics from '../services/musicsAPI';
 import MusicCard from './MusicCard';
+import getMusics from '../services/musicsAPI';
 import { addSong, getFavoriteSongs, removeSong } from '../services/favoriteSongsAPI';
 import Loading from './components/Loading';
 

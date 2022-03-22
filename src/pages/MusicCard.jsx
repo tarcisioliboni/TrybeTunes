@@ -19,14 +19,15 @@ class MusicCard extends Component {
           O seu navegador não suporta o elemento
           <code>audio</code>
         </audio>
-        <label htmlFor="favorite">
-          Adicionar as Favoritas
+        <label htmlFor={ `checkbox-music-${trackId}` }>
+          Favorita
           <input
             data-testid={ `checkbox-music-${trackId}` }
             type="checkbox"
             checked={ favoriteChecked }
             onChange={ (event) => favoriteOnChange(musicData, event) }
             name="favorite"
+            id={ `checkbox-music-${trackId}` }
           />
         </label>
       </div>

@@ -10,7 +10,7 @@ class Favorites extends Component {
 
     this.state = ({
       favorite: [],
-      loading: false,
+      loading: true,
     });
   }
 
@@ -26,18 +26,20 @@ class Favorites extends Component {
     this.setState({
       loading: false,
       favorite: result,
-    }, () => {
-      const { favorite } = this.state;
-      console.log(favorite);
     });
+    console.log(result);
   }
 
   handleRemoveSong = async (prop) => {
+    this.setState({
+      loading: true,
+    });
     await removeSong(prop);
-    this.setState((prevState) => ({
-      favorite: prevState.favorite.filter((item) => item !== prop),
+    const result = await getFavoriteSongs();
+    this.setState({
+      favorite: result,
       loading: false,
-    }), () => this.favoriteMusic());
+    });
   }
 
   render() {
@@ -53,9 +55,9 @@ class Favorites extends Component {
             <section>
               <div>
                 {
-                  favorite.map((music, index) => (<MusicCard
+                  favorite.map((music) => (<MusicCard
                     musicData={ music }
-                    key={ index }
+                    key={ music.trackId }
                     music={ music.trackName }
                     preview={ music.previewUrl }
                     trackId={ music.trackId }
